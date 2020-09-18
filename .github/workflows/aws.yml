@@ -1,13 +1,15 @@
-# This workflow will build and push a new version to Amazon S3,
-
-on:
-  release:
-    types: [created]
+# This workflow will build and push a new version to Amazon S3
 
 name: Build and deploy to Amazon S3
 
 jobs:
   build:
+    on:
+      push:
+        branches:
+          - master
+      release:
+        types: [created]
     name: Build
     runs-on: ubuntu-latest
     steps:
@@ -48,6 +50,9 @@ jobs:
         path: dist/
 
   deploy:
+    on:
+      release:
+        types: [created]
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
