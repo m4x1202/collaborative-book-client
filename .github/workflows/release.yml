@@ -55,4 +55,4 @@ jobs:
         aws-region: eu-central-1
     - name: Deploy to Amazon S3
       run: |
-        s3 sync ./dist s3://collaborative-book/ --delete
+        aws s3 sync ./dist s3://collaborative-book/ --delete
