@@ -1,4 +1,4 @@
-name: Build collaborative-book-client
+name: Release collaborative-book-client
 
 on:
   push:
@@ -14,12 +14,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
     - name: Setup Node.js environment
       uses: actions/setup-node@v1.4.3
       with:
         node-version: '14.x'
-
     - name: Npm cache
       uses: actions/cache@v2.1.1
       with:
@@ -30,13 +28,31 @@ jobs:
           ${{ runner.OS }}-
     - name: Install npm dependencies
       run: npm ci
-
     - name: Build collaborative-book-client
       run: |
         npm run build
-
     - name: Upload collaborative-book-client
       uses: actions/upload-artifact@v2
       with:
         name: cb-client-artifact
         path: dist/
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    needs: build
+    steps:
+    - name: Download collaborative-book-client artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: cb-client-artifact
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-central-1
+    - name: Deploy to Amazon S3
+      run: |
+        s3 sync ./dist s3://collaborative-book/ --delete
