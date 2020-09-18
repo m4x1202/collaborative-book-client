@@ -39,7 +39,7 @@ jobs:
 
     - name: Build collaborative-book-client
       run: |
-        vue-cli-service build
+        npm run build
 
     - name: Upload collaborative-book-client
       uses: actions/upload-artifact@v2
