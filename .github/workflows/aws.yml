@@ -8,7 +8,7 @@ name: Build and deploy to Amazon S3
 
 jobs:
   build:
-    name: Deploy
+    name: Build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -20,12 +20,12 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-central-1
-        
+
     - name: Setup Node.js environment
       uses: actions/setup-node@v1.4.3
       with:
         node-version: '14.x'
-        
+
     - name: Npm cache
       uses: actions/cache@v2.1.1
       with:
@@ -34,23 +34,24 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
           ${{ runner.OS }}-
-    - name: Install npm dependencies 
+    - name: Install npm dependencies
       run: npm ci
-          
+
     - name: Build collaborative-book-client
       run: |
         vue-cli-service build
-        
+
     - name: Upload collaborative-book-client
       uses: actions/upload-artifact@v2
       with:
         name: cb-client-artifact
         path: dist/
-        
+
   deploy:
+    name: Deploy
     needs: build
     runs-on: ubuntu-latest
-    steps:    
+    steps:
     - name: Download collaborative-book-client artifact
       uses: actions/download-artifact@v2
       with:
