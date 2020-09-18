@@ -4,13 +4,12 @@ on:
   release:
     types: [created]
 
-name: Deploy to Amazon S3
+name: Build and deploy to Amazon S3
 
 jobs:
-  deploy:
+  build:
     name: Deploy
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -26,9 +25,36 @@ jobs:
       uses: actions/setup-node@v1.4.3
       with:
         node-version: '14.x'
-
-    - name: Build and deploy to Amazon S3
-      id: build-image
+        
+    - name: Npm cache
+      uses: actions/cache@v2.1.1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          ${{ runner.OS }}-
+    - name: Install npm dependencies 
+      run: npm ci
+          
+    - name: Build collaborative-book-client
       run: |
-        npm install
-        npm run deploy
+        vue-cli-service build
+        
+    - name: Upload collaborative-book-client
+      uses: actions/upload-artifact@v2
+      with:
+        name: cb-client-artifact
+        path: dist/
+        
+  deploy:
+    runs-on: ubuntu-latest
+    steps:    
+    - name: Download collaborative-book-client artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: cb-client-artifact
+
+    - name: Deploy to Amazon S3
+      run: |
+        s3 sync ./dist s3://collaborative-book/ --delete
