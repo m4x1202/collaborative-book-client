@@ -17,7 +17,7 @@ const actions = {
         loginPayload.room = rootState.room.id
 
         // Check wether we are actually connected to the server before sending the socket event
-        if(rootGetters.connectedToServer) {
+        if (rootGetters.connectedToServer) {
             Vue.prototype.$socket.sendObj(loginPayload)
         } else {
             console.error("Websocket not connected!")

@@ -31,13 +31,13 @@ const actions = {
         console.log(userName)
         commit(SET_STORIES, stories)
     },
-    showStory({ rootState, rootGetters }, { player, stage}) {
+    showStory({ rootState, rootGetters }, { player, stage }) {
         //Prepare payload
         showStoryPayload.name = rootState.user.userName
         showStoryPayload.room = rootState.room.id
         showStoryPayload.payload = JSON.stringify({ user_name: player, stage: stage })
 
-        if(rootGetters.connectedToServer) {
+        if (rootGetters.connectedToServer) {
             Vue.prototype.$socket.sendObj(showStoryPayload)
         } else {
             console.error("Websocket not connected!")
@@ -48,7 +48,7 @@ const actions = {
         closeRoomPayload.name = rootState.user.userName
         closeRoomPayload.room = rootState.room.id
 
-        if(rootGetters.connectedToServer) {
+        if (rootGetters.connectedToServer) {
             Vue.prototype.$socket.sendObj(closeRoomPayload)
         } else {
             console.error("Websocket not connected!")

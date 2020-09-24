@@ -15,7 +15,7 @@ const actions = {
         startSessionPayload.payload = JSON.stringify({ last_stage: rootState.game.lastStage })
 
         // Check wether we are actually connected to the server before sending the socket event
-        if(rootGetters.connectedToServer) {
+        if (rootGetters.connectedToServer) {
             Vue.prototype.$socket.sendObj(startSessionPayload)
         } else {
             console.error("Websocket not connected!")

@@ -17,7 +17,7 @@ const mutations = {
 
 const actions = {
     reset({ commit }) {
-        commit(SET_ROOM_ID, ''),
+        commit(SET_ROOM_ID, '')
         commit(SET_ROOM_USERS, [])
     }
 }

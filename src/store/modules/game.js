@@ -49,7 +49,7 @@ const actions = {
         submitStoryPayload.room = rootState.room.id
         submitStoryPayload.payload = state.input
 
-        if(rootGetters.connectedToServer) {
+        if (rootGetters.connectedToServer) {
             Vue.prototype.$socket.sendObj(submitStoryPayload)
         } else {
             console.error("Websocket not connected!")

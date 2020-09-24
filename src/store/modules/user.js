@@ -31,8 +31,8 @@ const actions = {
         localStorage.setItem("name", state.userName)
     },
     reset({ commit }) {
-        commit(SET_USER_ADMIN, false),
-        commit(SET_USER_AUTHENTICATED, false),
+        commit(SET_USER_ADMIN, false)
+        commit(SET_USER_AUTHENTICATED, false)
         commit(SET_USER_STATUS, 'waiting')
     }
 }
