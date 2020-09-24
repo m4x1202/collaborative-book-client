@@ -31,11 +31,20 @@ const mutations = {
     },
 }
 
+var tm = null
+const ping = () => {
+    Vue.prototype.$socket.sendObj({ type: 'ping' })
+    tm = setTimeout(function () {
+        Vue.prototype.$socket.reconnect()
+    }, 5000);
+}
+
 const actions = {
     SOCKET_ONOPEN({ commit }) {
         console.debug(Vue.prototype.$socket)
         commit(SET_SOCKET, { isConnected: true, reconnectError: false })
         window.addEventListener('beforeunload', closeSocket)
+        setInterval(ping, 30000)
     },
     SOCKET_ONCLOSE({ state, commit }) {
         commit(SET_SOCKET, { isConnected: false, reconnectError: false })
@@ -53,6 +62,9 @@ const actions = {
     SOCKET_ONMESSAGE({ commit, dispatch, rootState }, message) {
         console.debug(message)
         switch (message.type) {
+            case "pong":
+                clearTimeout(tm)
+                break
             case "registration":
                 if (message.result === "success") {
                     commit('user/' + SET_USER_AUTHENTICATED, true)
