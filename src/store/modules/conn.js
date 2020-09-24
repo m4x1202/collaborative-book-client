@@ -4,6 +4,8 @@ import { SET_USER_ADMIN, SET_USER_AUTHENTICATED, SET_USER_STATUS } from './user'
 import { SET_ROOM_USERS } from './room'
 
 export const SET_SOCKET = 'SET_SOCKET'
+export const SET_PING_INTERVAL = 'SET_PING_INTERVAL'
+export const SET_PING_TIMEOUT = 'SET_PING_TIMEOUT'
 
 function closeSocket() {
     console.log("Closing socket")
@@ -15,6 +17,10 @@ const state = () => ({
     socket: {
         isConnected: false,
         reconnectError: false,
+    },
+    ping: {
+        interval: null,
+        timeout: null,
     }
 })
 
@@ -29,41 +35,57 @@ const mutations = {
         state.socket.isConnected = isConnected
         state.socket.reconnectError = reconnectError
     },
-}
-
-var tm = null
-const ping = () => {
-    Vue.prototype.$socket.sendObj({ type: 'ping' })
-    tm = setTimeout(function () {
-        Vue.prototype.$socket.reconnect()
-    }, 5000);
+    [SET_PING_INTERVAL](state, interval) {
+        state.ping.interval = interval
+    },
+    [SET_PING_TIMEOUT](state, timeout) {
+        state.ping.timeout = timeout
+    }
 }
 
 const actions = {
-    SOCKET_ONOPEN({ commit }) {
+    ping({ state, commit }) {
+        if (state.ping.timeout != null) {
+            clearTimeout(state.ping.timeout)
+        }
+        commit(SET_PING_TIMEOUT, setTimeout(function () {
+            Vue.prototype.$socket.reconnect()
+        }, 5000))
+        Vue.prototype.$socket.sendObj({ type: 'ping' })
+    },
+    SOCKET_ONOPEN({ state, commit, dispatch }) {
         console.debug(Vue.prototype.$socket)
         commit(SET_SOCKET, { isConnected: true, reconnectError: false })
         window.addEventListener('beforeunload', closeSocket)
-        setInterval(ping, 30000)
+        if (state.ping.interval != null) {
+            clearInterval(state.ping.interval)
+        }
+        commit(SET_PING_INTERVAL, setInterval(() => dispatch('ping'), 30000))
     },
     SOCKET_ONCLOSE({ state, commit }) {
-        commit(SET_SOCKET, { isConnected: false, reconnectError: false })
         if (state.socket.isConnected) {
+            commit(SET_SOCKET, { isConnected: false, reconnectError: false })
+            clearInterval(state.ping.interval)
+            commit(SET_PING_INTERVAL, null)
             window.removeEventListener('beforeunload', closeSocket)
         }
     },
-    SOCKET_ONERROR({ state }, event) {
+    SOCKET_ONERROR({ state, commit }, event) {
         console.error(state, event)
         if (state.socket.isConnected) {
+            commit(SET_SOCKET, { isConnected: false, reconnectError: false })
+            clearInterval(state.ping.interval)
+            commit(SET_PING_INTERVAL, null)
             window.removeEventListener('beforeunload', closeSocket)
         }
     },
     // default handler called for all methods
-    SOCKET_ONMESSAGE({ commit, dispatch, rootState }, message) {
+    SOCKET_ONMESSAGE({ state, commit, dispatch, rootState }, message) {
         console.debug(message)
         switch (message.type) {
             case "pong":
-                clearTimeout(tm)
+                clearTimeout(state.ping.timeout)
+                commit(SET_PING_TIMEOUT, null)
                 break
             case "registration":
                 if (message.result === "success") {
