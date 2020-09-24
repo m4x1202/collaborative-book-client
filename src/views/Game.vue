@@ -91,7 +91,7 @@ export default {
       roomId: (state) => state.room.id,
       players: (state) =>
         state.room.users.sort(function (x, y) {
-          return String(x.user_name).compareTo(y.user_name);
+          return String(x.user_name).localeCompare(y.user_name);
         }),
     }),
   },
