@@ -22,6 +22,9 @@
             <v-list disabled min-height="300">
               <v-subheader>Players</v-subheader>
               <v-list-item v-for="user in players" :key="user">
+                <v-list-item-icon>
+                  <v-icon>mdi-account</v-icon>
+                </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title v-text="user" />
                 </v-list-item-content>

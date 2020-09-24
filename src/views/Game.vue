@@ -7,9 +7,14 @@
             <v-container>
               <v-list disabled dense height="300">
                 <v-subheader>Players</v-subheader>
-                <v-list-item v-for="user in players" :key="user">
+                <v-list-item v-for="user in players" :key="user.user_name">
+                  <v-list-item-icon>
+                    <v-icon v-if="user.status == 'writing'">mdi-pencil-minus</v-icon>
+                    <v-icon v-else-if="user.status == 'submitted'">mdi-send-check</v-icon>
+                    <v-icon v-else>mdi-timer-sand</v-icon>
+                  </v-list-item-icon>
                   <v-list-item-content>
-                    <v-list-item-title v-text="user" />
+                    <v-list-item-title v-text="user.user_name" />
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
@@ -84,7 +89,10 @@ export default {
       lastStage: (state) => state.game.lastStage,
       output: (state) => state.game.output,
       roomId: (state) => state.room.id,
-      players: (state) => state.room.users.map((x) => x.user_name).sort(),
+      players: (state) =>
+        state.room.users.sort(function (x, y) {
+          return String(x.user_name).compareTo(y.user_name);
+        }),
     }),
   },
   methods: mapActions("game", ["submitStory"]),
