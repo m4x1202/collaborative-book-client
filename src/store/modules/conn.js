@@ -32,9 +32,8 @@ const mutations = {
 }
 
 const actions = {
-    SOCKET_ONOPEN({ commit }, event) {
-        Vue.prototype.$socket = event.currentTarget
-        console.log(event.currentTarget)
+    SOCKET_ONOPEN({ commit }) {
+        console.debug(Vue.prototype.$socket)
         commit(SET_SOCKET, { isConnected: true, reconnectError: false })
         window.addEventListener('beforeunload', closeSocket)
     },
@@ -52,7 +51,7 @@ const actions = {
     },
     // default handler called for all methods
     SOCKET_ONMESSAGE({ commit, dispatch, rootState }, message) {
-        console.log(message)
+        console.debug(message)
         switch (message.type) {
             case "registration":
                 if (message.result === "success") {
