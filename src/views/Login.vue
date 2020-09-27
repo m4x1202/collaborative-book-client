@@ -72,14 +72,14 @@ export default {
     nameRules: [
       (v) => !!v || "Name is required",
       (v) =>
-        (v.length >= 3 && v.length <= 10) ||
-        "Name must be between 3 and 10 characters",
+        (v.length >= 3 && v.length <= 20) ||
+        "Name must be between 3 and 20 characters",
     ],
     roomRules: [
       (v) => !!v || "Room is required",
       (v) =>
-        (v.length >= 3 && v.length <= 10) ||
-        "Room must be between 3 and 10 characters",
+        (v.length >= 3 && v.length <= 20) ||
+        "Room must be between 3 and 20 characters",
     ],
   }),
   mounted() {
