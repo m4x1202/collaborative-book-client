@@ -125,6 +125,7 @@ const actions = {
             case "close_room":
                 dispatch('user/reset')
                 dispatch('room/reset')
+                dispatch('result/reset')
                 router.push('/login')
                 break
             default:

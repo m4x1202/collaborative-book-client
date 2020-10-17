@@ -53,6 +53,9 @@ const actions = {
         } else {
             console.error("Websocket not connected!")
         }
+    },
+    reset({ commit }) {
+        commit(SET_STORIES, [])
     }
 }
 
