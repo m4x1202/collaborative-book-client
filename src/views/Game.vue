@@ -5,7 +5,7 @@
         <v-col cols="2">
           <v-card>
             <v-container>
-              <v-list disabled dense height="300">
+              <v-list disabled dense min-height="300">
                 <v-subheader>Players</v-subheader>
                 <v-list-item v-for="user in players" :key="user.user_name">
                   <v-list-item-icon>
