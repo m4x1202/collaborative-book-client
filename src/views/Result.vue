@@ -36,11 +36,23 @@
           </v-card>
           <div v-if="userIsAdmin">
             <v-btn color="yellow darken-1" @click="increment">More</v-btn>
-            <v-btn color="yellow darken-1" @click="closeRoom">Close Room</v-btn>
+            <v-btn color="yellow darken-1" @click="overlay = !overlay"
+              >Close Room</v-btn
+            >
           </div>
         </v-col>
       </v-row>
     </v-container>
+    <v-overlay :value="overlay">
+      <v-sheet light class="rounded-lg" height="200" width="300">
+        <v-container height="150" width="250">
+          <h1 align="center" class="display-1">Close?</h1>
+          <v-btn color="yellow darken-1" @click="closeRoom">Yes</v-btn>
+          <v-spacer />
+          <v-btn color="yellow darken-1" @click="overlay = false">No</v-btn>
+        </v-container>
+      </v-sheet>
+    </v-overlay>
   </v-main>
 </template>
 
@@ -52,6 +64,7 @@ export default {
   data: () => ({
     selected: null,
     stage: 1,
+    overlay: false,
   }),
   computed: {
     owner: {
